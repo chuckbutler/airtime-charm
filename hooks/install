@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+import os
+import shlex
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.join(os.environ['CHARM_DIR'], 'lib'))
+
+from charmhelpers.core import (
+    hookenv,
+    host,
+)
+from charmhelpers.fetch import (
+    apt_update,
+    apt_install,
+    add_source,
+
+)
+hooks = hookenv.Hooks()
+log = hookenv.log
+
+SERVICE = 'airtime'
+
+
+@hooks.hook('install')
+def install():
+    log('Installing airtime')
+    add_source('http://apt.sourcefabric.org/')
+    apt_update()
+    #hacky
+    subprocess.call(shlex.split('apt-get --force-yes install -y sourcefabric-keyring'))
+    subprocess.call(shlex.split('apt-get update'))
+    packages = [ 'postgresql', 'python-virtualenv', 'apache2', 'coreutils',
+                 'curl', 'ecasound', 'flac', 'gzip', 'libapache2-mod-php5',
+                 'libcamomile-ocaml-data', 'liquidsoap', 'locales', 'lsof',
+                 'monit', 'mp3gain', 'multitail', 'patch', 'php5-cli',
+                 'php5-curl', 'php5-gd', 'php5-json', 'php5-pgsql', 'php-apc',
+                 'php-pear', 'pwgen', 'python', 'rabbitmq-server', 'silan',
+                 'sudo', 'sysv-rc', 'tar', 'unzip', 'vorbisgain', 'vorbis-tools',
+                 'libzend-framework-php',
+              ]
+    apt_install(packages, fatal=True, options=['--force-yes'])
+
+    subprocess.call(shlex.split('a2enmod php5 rewrite'))
+
+if __name__ == "__main__":
+    # execute a hook based on the name the program is called by
+    hooks.execute(sys.argv)

@@ -1,0 +1,14 @@
+options:
+  airtime-sum:
+    type: string
+    default: ef027fc941d2b3062edebaeae16da636d351c2b5
+    description: "Airtime SHA1Sum"
+  airtime-pkg:
+    type: string
+    default: https://github.com/sourcefabric/Airtime/archive/airtime-2.5.1-ga.tar.gz
+    description: "A short description of the configuration option"
+  domain:
+    type: string
+    default:
+    description: |
+        "Domain from which to serve Airtime, defaults to the units public-address"

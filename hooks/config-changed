@@ -1,0 +1,54 @@
+#!/usr/bin/python
+
+import os
+import shlex
+import shutil
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.join(os.environ['CHARM_DIR'], 'lib'))
+
+from charmhelpers.core import (
+    hookenv,
+    host,
+)
+from charmhelpers.fetch.archiveurl import ArchiveUrlFetchHandler as fetch
+# from charmhelpers.contrib.templating.jinja import render
+from common import common
+
+hooks = hookenv.Hooks()
+log = hookenv.log
+
+SERVICE = 'airtime'
+
+
+@hooks.hook('config-changed')
+def config_changed():
+    config = hookenv.config()
+
+    for key in config:
+        if config.changed(key):
+            log("config['{}'] changed from {} to {}".format(
+                key, config.previous(key), config[key]))
+
+    config.save()
+
+    if not os.path.exists(common['basepath']):
+      fetch_airtime(config)
+      install_airtime()
+
+
+def fetch_airtime(config):
+    f = fetch()
+    t = f.download_and_validate(config['airtime-pkg'], config['airtime-sum'])
+    shutil.move(t, '/opt/airtime.tgz')
+    os.makedirs('/opt/airtime')
+    subprocess.check_output(shlex.split('tar xvfz /opt/airtime.tgz -C /opt/airtime --strip-components=1'))
+
+def install_airtime():
+  cmd = shlex.split('/opt/airtime/install_full/ubuntu/airtime-full-install')
+  subprocess.check_call(cmd)
+
+if __name__ == "__main__":
+    # execute a hook based on the name the program is called by
+    hooks.execute(sys.argv)
