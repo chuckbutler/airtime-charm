@@ -35,6 +35,7 @@ def config_changed():
 
     if not os.path.exists(common['basepath']):
       fetch_airtime(config)
+      hate_on_postgres()
       install_airtime()
 
 
@@ -44,6 +45,12 @@ def fetch_airtime(config):
     shutil.move(t, '/opt/airtime.tgz')
     os.makedirs('/opt/airtime')
     subprocess.check_output(shlex.split('tar xvfz /opt/airtime.tgz -C /opt/airtime --strip-components=1'))
+
+def hate_on_postgres(cmd=[]):
+  cmd[0] = "pg_dropcluster --stop 9.1 main"
+  cmd[1] = "pg_createcluster --start -e UTF-8 9.1 main"
+  for c in cmd:
+    subprocess.call(shlex.split(c))
 
 def install_airtime():
   cmd = shlex.split('/opt/airtime/install_full/ubuntu/airtime-full-install')
