@@ -38,6 +38,9 @@ def config_changed():
       hate_on_postgres()
       install_airtime()
 
+      #expose the services
+      host.open_port(8000)
+      host.open_port(80)
 
 def fetch_airtime(config):
     f = fetch()
@@ -47,8 +50,8 @@ def fetch_airtime(config):
     subprocess.check_output(shlex.split('tar xvfz /opt/airtime.tgz -C /opt/airtime --strip-components=1'))
 
 def hate_on_postgres(cmd=[]):
-  cmd[0] = "pg_dropcluster --stop 9.1 main"
-  cmd[1] = "pg_createcluster --start -e UTF-8 9.1 main"
+  cmd.append("pg_dropcluster --stop 9.1 main")
+  cmd.append("pg_createcluster --start -e UTF-8 9.1 main")
   for c in cmd:
     subprocess.call(shlex.split(c))
 
