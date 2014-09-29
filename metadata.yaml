@@ -1,17 +1,17 @@
 name: airtime
-summary: <Fill in summary here>
-maintainer: charles <charles@desktop>
+summary: Airtime Radio Automation from SourceFabric
+maintainer: Charles Butler <charles.butler@ubuntu.com>
 description: |
-  <Multi-line description here>
+  Deploys the SourceFabric Radio Automation suite. RabbitMQ, IceCast, Monit
+  and Airtime on Apache2
 categories:
-  - misc
+  - applications
 subordinate: false
 provides:
-  provides-relation:
-    interface: interface-name
+  website:
+    interface: http
+  scsource:
+    interface: streamrelay
 requires:
-  requires-relation:
-    interface: interface-name
-peers:
-  peer-relation:
-    interface: interface-name
+  screlay:
+    interface: streamrelay
